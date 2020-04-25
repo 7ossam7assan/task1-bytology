@@ -1,9 +1,12 @@
 <?php
 
 require 'DataBase.php';
+require 'OutputGenerator.php';
 
 class Task
 {
+    use OutputGenerator;
+
     private $number1, $number2;
 
     public function __construct($argv =[])
@@ -20,6 +23,7 @@ class Task
         $DB = DataBase::getInstance();
 
         $area = $this->calculateArea($this->number1, $this->number2);
+
         $data = [
             'number_1' => $this->number1,
             'number_2' => $this->number2,
@@ -53,18 +57,21 @@ class Task
                 ->fetchAll();
     }
 
+
+    /*
+     * i have used the trait to apply single
+     * responsibility if change needed in output this class not affected
+    */
+
     public function printToTerminal()
     {
-        echo 'ID |Num 1 |Num 2 |Average | Area | Squared Area '."\n";
-        foreach ($this->latest(5) as $info){
-            echo $info['id'] . ' |' . $info['number_1'] . '    |' . $info['number_2'] . '    |' .
-                $info['average'] . '     |' . $info['area'] . '     |'.$info['squared_area'] . "\n";
-        }
+
+        OutputGenerator::printToTerminal($this->latest(5) );
     }
 
-    public function generateHtml()
+    public function generateHtml(string $directory)
     {
-        return file_get_contents(__DIR__ .'/../resources/view/index.php');
+        return OutputGenerator::generateHtml($directory);
     }
 
 }

@@ -13,8 +13,7 @@ if (isset($argc) && count($argv) == 3) {
     $task = new Task($argv);
     $task->storeData();
     $task->printToTerminal();
-    $html_content = $task->generateHtml();
-
+    $html_content = $task->generateHtml(__DIR__ .'/resources/view/index.php');
 }
 else {
     echo "wrong input \n";
