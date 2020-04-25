@@ -27,9 +27,9 @@ class Task
             'area' => $area,
             'squared_area' => $area * $area,
         ];
-        $sql = "INSERT INTO calculated_results 
-                       (number_1, number_2, average, area, squared_area) 
-                       VALUES (:number_1, :number_2, :average , :area, :squared_area)";
+        $sql = 'INSERT INTO calculated_results 
+                            (number_1, number_2, average, area, squared_area) 
+                     VALUES (:number_1, :number_2, :average , :area, :squared_area)';
         $DB->pdo->prepare($sql)->execute($data);
 
     }
@@ -39,21 +39,32 @@ class Task
         return array_sum(func_get_args()) / func_num_args();
     }
 
-    private function calculateArea(int ...$numbers): float
+    private function calculateArea(int $number1, int $number2): int
     {
         //TODO Replace this with area equation
-        return array_sum(func_get_args()) / func_num_args();
+        return $number1 * $number2;
     }
 
     public function latest(int $count = 5): array
     {
         $DB = DataBase::getInstance();
-        return $DB->pdo->query("SELECT * FROM calculated_results ORDER BY id DESC LIMIT 5")->fetchAll();
+        return  $DB->pdo
+                ->query('SELECT * FROM (SELECT * FROM calculated_results ORDER BY id DESC LIMIT 5) sub ORDER BY id ASC')
+                ->fetchAll();
+    }
+
+    public function printToTerminal()
+    {
+        echo 'ID |Num 1 |Num 2 |Average | Area | Squared Area '."\n";
+        foreach ($this->latest(5) as $info){
+            echo $info['id'] . ' |' . $info['number_1'] . '    |' . $info['number_2'] . '    |' .
+                $info['average'] . '     |' . $info['area'] . '     |'.$info['squared_area'] . "\n";
+        }
     }
 
     public function generateHtml()
     {
-        echo  file_get_contents(__DIR__ .'/../resources/view/index.php');
+        return file_get_contents(__DIR__ .'/../resources/view/index.php');
     }
 
 }

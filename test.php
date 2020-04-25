@@ -12,17 +12,12 @@ if (isset($argc) && count($argv) == 3) {
 
     $task = new Task($argv);
     $task->storeData();
-
-    echo "ID |Num 1 |Num 2 |Average | Area | Squared Area "."\n";
-
-    foreach ($task->latest(5) as $info){
-        echo $info["id"] . ' |' . $info["number_1"] . '    |' . $info["number_2"] . '    |' .
-            $info["average"] . '     |' . $info["area"] . '     |'.$info["squared_area"] . "\n";
-    }
-
-    $task->generateHtml();
+    $task->printToTerminal();
+    $html_content = $task->generateHtml();
 
 }
 else {
     echo "wrong input \n";
 }
+
+
